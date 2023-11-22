@@ -62,6 +62,24 @@ public partial class @PlayerControl : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Trigger"",
+                    ""type"": ""Button"",
+                    ""id"": ""6cd402d7-009d-4a91-ab71-08cb0e375665"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Use"",
+                    ""type"": ""Button"",
+                    ""id"": ""a235da03-6272-45eb-9b24-72e08ac407cd"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -152,6 +170,28 @@ public partial class @PlayerControl : IInputActionCollection2, IDisposable
                     ""action"": ""Aim"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cb887474-ff5b-42f5-a10b-2dffa5c085ac"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Trigger"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""aa701959-5d5c-4f72-982c-0eb426748a6b"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Use"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -164,6 +204,8 @@ public partial class @PlayerControl : IInputActionCollection2, IDisposable
         m_Player_Dodge = m_Player.FindAction("Dodge", throwIfNotFound: true);
         m_Player_Shoot = m_Player.FindAction("Shoot", throwIfNotFound: true);
         m_Player_Aim = m_Player.FindAction("Aim", throwIfNotFound: true);
+        m_Player_Trigger = m_Player.FindAction("Trigger", throwIfNotFound: true);
+        m_Player_Use = m_Player.FindAction("Use", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -227,6 +269,8 @@ public partial class @PlayerControl : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Dodge;
     private readonly InputAction m_Player_Shoot;
     private readonly InputAction m_Player_Aim;
+    private readonly InputAction m_Player_Trigger;
+    private readonly InputAction m_Player_Use;
     public struct PlayerActions
     {
         private @PlayerControl m_Wrapper;
@@ -235,6 +279,8 @@ public partial class @PlayerControl : IInputActionCollection2, IDisposable
         public InputAction @Dodge => m_Wrapper.m_Player_Dodge;
         public InputAction @Shoot => m_Wrapper.m_Player_Shoot;
         public InputAction @Aim => m_Wrapper.m_Player_Aim;
+        public InputAction @Trigger => m_Wrapper.m_Player_Trigger;
+        public InputAction @Use => m_Wrapper.m_Player_Use;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -256,6 +302,12 @@ public partial class @PlayerControl : IInputActionCollection2, IDisposable
                 @Aim.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAim;
                 @Aim.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAim;
                 @Aim.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAim;
+                @Trigger.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTrigger;
+                @Trigger.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTrigger;
+                @Trigger.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTrigger;
+                @Use.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnUse;
+                @Use.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnUse;
+                @Use.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnUse;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -272,6 +324,12 @@ public partial class @PlayerControl : IInputActionCollection2, IDisposable
                 @Aim.started += instance.OnAim;
                 @Aim.performed += instance.OnAim;
                 @Aim.canceled += instance.OnAim;
+                @Trigger.started += instance.OnTrigger;
+                @Trigger.performed += instance.OnTrigger;
+                @Trigger.canceled += instance.OnTrigger;
+                @Use.started += instance.OnUse;
+                @Use.performed += instance.OnUse;
+                @Use.canceled += instance.OnUse;
             }
         }
     }
@@ -282,5 +340,7 @@ public partial class @PlayerControl : IInputActionCollection2, IDisposable
         void OnDodge(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
+        void OnTrigger(InputAction.CallbackContext context);
+        void OnUse(InputAction.CallbackContext context);
     }
 }

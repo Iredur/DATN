@@ -14,7 +14,8 @@ public class small_player_bullet : Bullet
         }
         else
         {
-            gameObject.SetActive(false);
+            //gameObject.SetActive(false);
+            _projectile.gameObject.SetActive(false);
         }
     }
 

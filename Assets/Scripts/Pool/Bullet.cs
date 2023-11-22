@@ -26,8 +26,8 @@ public class Bullet : Projectile
         timer = 0;
         timerOn = false;    
         
-        _projectile.gameObject.SetActive(false);
-        Debug.Log("disabled");
+        //_projectile.gameObject.SetActive(false);
+        _projectile.Disable();
     }
 
     private void Update()

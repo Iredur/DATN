@@ -20,6 +20,9 @@ public class InputManager : MonoBehaviour
 
         playerControl.Player.Aim.performed += _playerController.Aim;
 
+        playerControl.Player.Trigger.performed += _playerController.Trigger_performed;
+        playerControl.Player.Use.performed += _playerController.Pickup_performed;
+
     }
 
     private void Update()

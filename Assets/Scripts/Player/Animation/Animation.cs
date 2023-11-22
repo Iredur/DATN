@@ -8,6 +8,7 @@ public class Animation : MonoBehaviour
     private PlayerController _playerController;
     private PlayerAnimationState _playerAnimationState = PlayerAnimationState.IDLE;
     private Animator _animator;
+    public bool isFacingRight;
 
     private void Awake()
     {
@@ -41,7 +42,7 @@ public class Animation : MonoBehaviour
         {
             _playerAnimationState = PlayerAnimationState.SHOOT;
         }
-        if (_playerController._characterController.velocity != Vector3.zero)
+        if (_playerController.inputVector != Vector2.zero)
         {
             _playerAnimationState = PlayerAnimationState.RUN;
         }
@@ -51,8 +52,17 @@ public class Animation : MonoBehaviour
     void FacingDirection()
     {
         var temp = _playerController.crosshair.transform.position - _playerController.gameObject.transform.position;
-        if(temp.x>0) this.transform.localScale = new Vector3(1,1,1);
-        if(temp.x<0) this.transform.localScale = new Vector3(-1,1,1);
+        if (temp.x > 0)
+        {
+            isFacingRight = true;
+            this.transform.localScale = new Vector3(1,1,1);
+        }
+
+        if (temp.x < 0)
+        {
+            isFacingRight = false;
+            this.transform.localScale = new Vector3(-1,1,1);
+        }
     }
 
     public enum PlayerAnimationState

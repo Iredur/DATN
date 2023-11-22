@@ -5,7 +5,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     public Vector3 firepoint;
-    public List<Bullet> _projectiles = new List<Bullet>();
+    public List<Bullet> _bullet = new List<Bullet>();
     [SerializeField]public int id;
     [SerializeField] public string name;
     public int receivedID=0;
@@ -18,11 +18,11 @@ public class Projectile : MonoBehaviour
 
     public void ForAwake()
     {
-        _projectiles = GetComponentsInChildren<Bullet>(true).ToList();
-        _projectiles = _projectiles.Where(x => x != this).ToList();
-        _projectiles = _projectiles.OrderByDescending(x => x.id).ToList();
+        _bullet = GetComponentsInChildren<Bullet>(true).ToList();
+        _bullet = _bullet.Where(x => x != this).ToList();
+        _bullet = _bullet.OrderByDescending(x => x.id).ToList();
 
-        foreach (var VARIABLE in _projectiles)
+        foreach (var VARIABLE in _bullet)
         {
             VARIABLE._projectile = this;
         }
@@ -30,9 +30,13 @@ public class Projectile : MonoBehaviour
 
     private void OnEnable()
     {
+        foreach (var VARIABLE in _bullet)
+        {
+            VARIABLE.gameObject.SetActive(false);
+        }
         if (allowList)
         {
-            _projectiles[receivedID].gameObject.SetActive(true);
+            _bullet[receivedID].gameObject.SetActive(true);
         }
     }
 
@@ -41,5 +45,10 @@ public class Projectile : MonoBehaviour
         if (!allowList)
             allowList = true;
         receivedID = 0;
+    }
+
+    public void Disable()
+    {
+        this.gameObject.SetActive(false);
     }
 }

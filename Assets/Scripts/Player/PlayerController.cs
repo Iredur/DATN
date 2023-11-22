@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine.InputSystem;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Camera camera;
     [SerializeField] private Transform cameraTarget;
     [SerializeField] int screenRadius;
+    private Animation _animation;
 
     #region Gun Related
 
@@ -23,25 +25,28 @@ public class PlayerController : MonoBehaviour
 
     #endregion
     
-    #region Component
-
-    public CharacterController _characterController;
-    
-
-    #endregion
-
     #region Attack Variable
     private float timer = 0;
     private bool timerOn;
 
+
     [SerializeField] private float ChargeTime=1;
+    public bool canPickup = false;
+    public bool canTrigger = false;
+    
     #endregion
 
     #region Movement related
 
     [SerializeField] private float speed = 5;
     public Vector2 inputVector;
-    
+
+    [SerializeField] private float dashTimer = 1;
+    [SerializeField] private bool canDash = true;
+    [SerializeField] private float dashSpeed = 15;
+    [SerializeField] private Vector2 dashDir;
+    [SerializeField] private bool isDashing = false;
+    [SerializeField] private float dashCooldown = 3;
 
     #endregion
 
@@ -60,22 +65,24 @@ public class PlayerController : MonoBehaviour
     #region public bool
 
     public bool isAttacking = false;
-    
-    
-
     #endregion
     
     #region Unity Functions
 
     private void Awake()
     {
-        
-        _characterController = GetComponent<CharacterController>();
+        _animation = GetComponentInChildren<Animation>();
     }
 
     private void Update()
     {
-        _characterController.Move(inputVector * Time.deltaTime * speed);
+        if(isDashing)
+            transform.Translate(dashDir*dashSpeed*Time.deltaTime);
+        else
+        {
+            Movement(inputVector);
+        }
+        
         
         CrosshairHandling();
         RotateGun();   
@@ -87,7 +94,14 @@ public class PlayerController : MonoBehaviour
     #region InputHandling
     public void Dodge(InputAction.CallbackContext context)
     {
-        Debug.Log("Dodge");
+        
+        if (canDash)
+        {
+            if (inputVector != Vector2.zero)
+                dashDir = inputVector;
+            StartCoroutine(Dash());
+        }
+        
     }
 
     public void Shoot(InputAction.CallbackContext context)
@@ -112,7 +126,7 @@ public class PlayerController : MonoBehaviour
             //shoot small bullet
             if (bullet != null)
             {
-                bullet.transform.position = transform.position;
+                bullet.transform.position = firepoint.position;
                 bullet.SetActive(true);
             }
         }
@@ -125,6 +139,16 @@ public class PlayerController : MonoBehaviour
     }
 
     public void Aim(InputAction.CallbackContext context)
+    {
+        
+    }
+
+    public void Pickup_performed(InputAction.CallbackContext context)
+    {
+        
+    }
+
+    public void Trigger_performed(InputAction.CallbackContext context)
     {
         
     }
@@ -152,13 +176,40 @@ public class PlayerController : MonoBehaviour
             timer += Time.deltaTime;
         else timer = 0;
     }
+    
+    
     void RotateGun()
     {
         Vector2 distanceVector = (Vector2) crosshair.transform.position - (Vector2)this.transform.position;
         float angle = Mathf.Atan2(distanceVector.y, distanceVector.x) * Mathf.Rad2Deg;
+        
         gunPivot.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-    }
-    
+        
+        if (_animation.isFacingRight)
+        {
+            gunPivot.localScale = new Vector3(1,1,1);
+        }
 
-    
+        if (!_animation.isFacingRight)
+        {
+            gunPivot.localScale = new Vector3(1,-1,1);
+        }
+        
+    }
+
+    void Movement(Vector2 dir)
+    {
+       transform.Translate(dir*speed*Time.deltaTime); 
+    }
+
+    IEnumerator Dash()
+    {
+        canDash = false;
+        isDashing = true;
+        
+        yield return new WaitForSeconds(dashTimer);
+        isDashing = false;
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
+    }
 }
