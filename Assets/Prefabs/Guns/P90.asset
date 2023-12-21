@@ -12,10 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac324d4e8bb032d4da721e6e071d7022, type: 3}
   m_Name: P90
   m_EditorClassIdentifier: 
-  name: P90
-  id: 0
+  name: p90
   description: high fire rate SMG
   sprite: {fileID: 21300000, guid: 14106228cc206774bb032a1e03a08809, type: 3}
   fireRate: 50
-  damage: 2
-  bulletType: 

@@ -1,54 +1,110 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
+    [SerializeField] AudioClip destroyed;
     public Vector3 firepoint;
-    public List<Bullet> _bullet = new List<Bullet>();
-    [SerializeField]public int id;
-    [SerializeField] public string name;
-    public int receivedID=0;
-    private bool allowList = false;
+    Player player;
 
+    public bool isFriendly;
+
+    public BulletType bulletType;
+    [SerializeField] public float decayTime;
+    [SerializeField] BulletType dummyBullet;
+    public float timer;
+    //[SerializeField] public float travelSpeed;
+    public bool timerOn = false;
+
+    [SerializeField] BoxCollider2D boxCollider2D;
+    [SerializeField] SpriteRenderer spriteRenderer;
     private void Awake()
     {
-        
+        player = FindObjectOfType<Player>();
     }
-
-    public void ForAwake()
+    private void Start()
     {
-        _bullet = GetComponentsInChildren<Bullet>(true).ToList();
-        _bullet = _bullet.Where(x => x != this).ToList();
-        _bullet = _bullet.OrderByDescending(x => x.id).ToList();
-
-        foreach (var VARIABLE in _bullet)
-        {
-            VARIABLE._projectile = this;
-        }
+        if (bulletType == null)
+            bulletType = dummyBullet;
     }
 
     private void OnEnable()
     {
-        foreach (var VARIABLE in _bullet)
-        {
-            VARIABLE.gameObject.SetActive(false);
-        }
-        if (allowList)
-        {
-            _bullet[receivedID].gameObject.SetActive(true);
-        }
+        timerOn = true;
+        decayTime += Time.deltaTime;
     }
 
     private void OnDisable()
     {
-        if (!allowList)
-            allowList = true;
-        receivedID = 0;
+        this.transform.localPosition = Vector3.zero;
+        timer = 0;
+        timerOn = false;
     }
 
-    public void Disable()
+    private void Update()
     {
-        this.gameObject.SetActive(false);
+        Timer();
+        BulletTravel();
+    }
+
+    public void BulletTravel()
+    {
+        if (timer < decayTime)
+        {
+            this.transform.position += bulletType.speed * Time.deltaTime * transform.right;
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
+    public void Timer()
+    {
+        if (timerOn)
+            timer += Time.deltaTime;
+        else timer = 0;
+    }
+    public void UpdateBulletData(BulletType assignedBullet)
+    {
+        bulletType = assignedBullet;
+        decayTime = bulletType.lifeTime;
+        spriteRenderer.sprite = bulletType.sprite;
+        boxCollider2D.size = spriteRenderer.bounds.size;
+    }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("obstacle"))
+        {
+            Debug.Log("hit wall");
+            DestroyCollide();
+        }
+        if (other.TryGetComponent<IDamagable>(out IDamagable damagable))
+        {
+            if (player == damagable && isFriendly)
+            {
+                return;
+            }
+            if (player != damagable && !isFriendly)
+            {
+                return;
+            }
+            damagable.takeDamage(isFriendly, bulletType.damage);
+            DestroyCollide();
+        }
+    }
+    void DestroyCollide()
+    {
+        SoundManager.Instance.PlaySound(destroyed, true);
+        GameObject fx = ObjectPool.instance.getPooledFX(this.transform.rotation, bulletType.explosionSize, isFriendly, bulletType.explosionDamage);
+        if (fx != null)
+        {
+            fx.transform.position = this.transform.position;
+            fx.SetActive(true);
+            fx.GetComponent<ParticleSystem>().Play();
+        }
+        gameObject.SetActive(false);
     }
 }

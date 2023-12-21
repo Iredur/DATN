@@ -11,9 +11,9 @@ public class InputManager : MonoBehaviour
         //for C# events
         playerControl = new PlayerControl();
         playerControl.Player.Enable();
-        
+
         playerControl.Player.Dodge.performed += _playerController.Dodge;
-        
+
         playerControl.Player.Shoot.started += _playerController.Shoot_started;
         playerControl.Player.Shoot.performed += _playerController.Shoot;
         playerControl.Player.Shoot.canceled += _playerController.Shoot_cancelled;
@@ -22,6 +22,8 @@ public class InputManager : MonoBehaviour
 
         playerControl.Player.Trigger.performed += _playerController.Trigger_performed;
         playerControl.Player.Use.performed += _playerController.Pickup_performed;
+
+        playerControl.Player.Pause.performed += _playerController.Pause_performed;
 
     }
 
