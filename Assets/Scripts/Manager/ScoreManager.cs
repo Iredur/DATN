@@ -17,8 +17,10 @@ public class ScoreManager : MonoBehaviour
     private void Start()
     {
         highscore = PlayerPrefs.GetInt("highscore", 0);
+        PlayerPrefs.SetInt("score", 0);
         scoreText.text = PlayerPrefs.GetInt("score", 0).ToString() + " POINTS";
         highscoreText.text = "HIGHSCORE: " + highscore.ToString();
+        StartCoroutine(delay());
     }
     IEnumerator delay()
     {

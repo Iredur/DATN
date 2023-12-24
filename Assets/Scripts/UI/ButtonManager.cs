@@ -11,10 +11,18 @@ public class ButtonManager : MonoBehaviour
     }
     public void Reload()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     public void Home()
     {
         SceneManager.LoadScene(0);
+    }
+    public void Play()
+    {
+        SceneManager.LoadScene(2);
+    }
+    public void Tutorial()
+    {
+        SceneManager.LoadScene(1);
     }
 }

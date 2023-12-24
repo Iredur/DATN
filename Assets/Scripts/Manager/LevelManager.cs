@@ -33,11 +33,11 @@ public class LevelManager : MonoBehaviour
     {
         if (enemy.Count == 0 && start)
         {
-            SceneManager.LoadScene(2);
+            SceneManager.LoadScene(3);
         }
         if (player.lost == true)
         {
-            SceneManager.LoadScene(3);
+            SceneManager.LoadScene(4);
         }
     }
 

@@ -3995,7 +3995,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPausing: 0
-  uimanager: {fileID: 0}
+  uimanager: {fileID: 693035815}
   freezeRotation: 0
   normalMode: {fileID: 1927513959}
   DTMode: {fileID: 2009767589}
